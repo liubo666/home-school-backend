@@ -46,9 +46,7 @@ CREATE TABLE IF NOT EXISTS edu_class (
     INDEX idx_grade (grade),
     INDEX idx_teacher_id (teacher_id),
     INDEX idx_status (status),
-    INDEX idx_created_time (created_time),
-
-    FOREIGN KEY (teacher_id) REFERENCES sys_user(id)
+    INDEX idx_created_time (created_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 
 -- 学生表
@@ -77,9 +75,7 @@ CREATE TABLE IF NOT EXISTS edu_student (
     INDEX idx_id_card (id_card),
     INDEX idx_name (name),
     INDEX idx_status (status),
-    INDEX idx_created_time (created_time),
-
-    FOREIGN KEY (class_id) REFERENCES edu_class(id)
+    INDEX idx_created_time (created_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生表';
 
 -- 家长学生关联表
@@ -93,10 +89,7 @@ CREATE TABLE IF NOT EXISTS edu_parent_student (
 
     UNIQUE KEY uk_parent_student (parent_id, student_id),
     INDEX idx_parent_id (parent_id),
-    INDEX idx_student_id (student_id),
-
-    FOREIGN KEY (parent_id) REFERENCES sys_user(id),
-    FOREIGN KEY (student_id) REFERENCES edu_student(id)
+    INDEX idx_student_id (student_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='家长学生关联表';
 
 -- 学生档案记录表
@@ -124,10 +117,7 @@ CREATE TABLE IF NOT EXISTS edu_student_record (
     INDEX idx_type (type),
     INDEX idx_category (category),
     INDEX idx_created_time (created_time),
-    INDEX idx_is_public (is_public),
-
-    FOREIGN KEY (student_id) REFERENCES edu_student(id),
-    FOREIGN KEY (teacher_id) REFERENCES sys_user(id)
+    INDEX idx_is_public (is_public)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学生档案记录表';
 
 -- 通知消息表
@@ -145,9 +135,7 @@ CREATE TABLE IF NOT EXISTS sys_notification (
     INDEX idx_user_id (user_id),
     INDEX idx_type (type),
     INDEX idx_is_read (is_read),
-    INDEX idx_created_time (created_time),
-
-    FOREIGN KEY (user_id) REFERENCES sys_user(id)
+    INDEX idx_created_time (created_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='通知消息表';
 
 -- 系统日志表
@@ -189,9 +177,7 @@ CREATE TABLE IF NOT EXISTS sys_file (
     INDEX idx_file_name (file_name),
     INDEX idx_upload_user_id (upload_user_id),
     INDEX idx_business_type (business_type),
-    INDEX idx_created_time (created_time),
-
-    FOREIGN KEY (upload_user_id) REFERENCES sys_user(id)
+    INDEX idx_created_time (created_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文件管理表';
 
 -- 创建初始管理员用户

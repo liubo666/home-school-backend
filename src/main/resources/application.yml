@@ -10,32 +10,22 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev  # 激活开发环境
 
   application:
     name: home-school-backend
 
-  # 数据源配置
+  # 数据源公共配置（环境特定参数由dev配置覆盖）
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver  # 主配置保留驱动，避免重复
     url: jdbc:mysql://localhost:3306/home_school?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:123456}
-    hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      auto-commit: true
-      idle-timeout: 30000
-      pool-name: HomeSchoolHikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      connection-test-query: SELECT 1
+    username: ${DB_USERNAME:root}  # 支持环境变量注入，优先级更高
+    password: ${DB_PASSWORD:root}
 
-  # JPA配置
+  # JPA公共配置（开发环境的show-sql等在dev中单独设置）
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: false
+      ddl-auto: none  # 公共策略：禁止自动建表
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
@@ -45,15 +35,12 @@ spring:
           batch_size: 25
         order_inserts: true
         order_updates: true
-        generate_statistics: false
-    open-in-view: false
+        generate_statistics: false  # 开发环境可开启，主配置默认关闭
+    open-in-view: false  # 关闭懒加载隐患
 
-  # Redis配置
+  # Redis公共配置（连接池参数通用，环境特定的host/port在dev中覆盖）
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
       database: 0
       timeout: 3000ms
       lettuce:
@@ -64,7 +51,7 @@ spring:
           max-wait: 3000ms
           time-between-eviction-runs: 30000ms
 
-  # 缓存配置
+  # 缓存公共配置（Redis缓存策略通用）
   cache:
     type: redis
     redis:
@@ -73,7 +60,7 @@ spring:
       use-key-prefix: true
       key-prefix: "home-school:"
 
-  # Jackson配置
+  # Jackson全局配置（日期、序列化规则通用）
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
@@ -85,7 +72,7 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
 
-  # 文件上传配置
+  # 文件上传公共限制（大小限制通用）
   servlet:
     multipart:
       max-file-size: 10MB
@@ -93,7 +80,7 @@ spring:
       enabled: true
       file-size-threshold: 0
 
-# MyBatis Plus配置
+# MyBatis Plus全局配置（通用配置，无环境差异）
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
@@ -113,14 +100,8 @@ mybatis-plus:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.school.cooperation.entity
 
-# 日志配置
+# 日志公共配置（输出格式、文件路径通用，级别由dev覆盖）
 logging:
-  level:
-    root: INFO
-    com.school.cooperation: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.cache: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
@@ -130,22 +111,22 @@ logging:
     max-history: 30
     total-size-cap: 1GB
 
-# JWT配置
+# JWT配置（密钥支持环境变量，避免硬编码敏感信息）
 jwt:
-  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}  # 生产环境必须通过环境变量注入
   expiration: 86400000  # 24小时
   refresh-expiration: 604800000  # 7天
   issuer: home-school-backend
 
-# MinIO配置
+# MinIO公共配置（环境特定的bucket在dev中覆盖）
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
-  bucket-name: home-school
+  bucket-name: home-school  # 生产环境桶名
   region: us-east-1
 
-# Knife4j API文档配置
+# Knife4j公共配置（文档元信息通用，开发环境开启debug）
 knife4j:
   enable: true
   openapi:
@@ -180,26 +161,27 @@ knife4j:
     enable-footer-custom: true
     footer-custom-content: Copyright © 2024 Home School Team
     enable-dynamic-parameter: false
-    enable-debug: true
     enable-open-api: true
     enable-group: true
   cors: true
-  production: false
+  production: false  # 开发环境默认关闭生产模式
   basic:
-    enable: false
+    enable: false  # 开发环境关闭基础认证（方便调试）
     username: admin
     password: 123456
 
-# Actuator监控配置
+# Actuator公共配置（生产环境限制暴露，开发环境在dev中放开）
 management:
   endpoints:
     web:
-      exposure:
-        include: health,info,metrics,prometheus,env,beans
       base-path: /actuator
+    jmx:
+      exposure:
+        include:  # 禁用JMX端点
+  jmx:
+    enabled: false  # 全局禁用JMX，避免安全风险
   endpoint:
     health:
-      show-details: when-authorized
       show-components: always
     metrics:
       enabled: true
@@ -208,7 +190,7 @@ management:
   metrics:
     export:
       prometheus:
-        enabled: true
+      enabled: true
     distribution:
       percentiles-histogram:
         http.server.requests: true
@@ -220,16 +202,15 @@ management:
       server:
         request:
           autotime:
-            enabled: true
+            nabled: true
   info:
     env:
       enabled: true
     git:
       mode: full
 
-# 自定义配置
+# 自定义配置（通用业务参数，无环境差异）
 app:
-  # 文件存储配置
   storage:
     type: minio  # local/minio/oss
     local:
@@ -237,43 +218,32 @@ app:
     allowed-types: .jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx
     max-size: 10485760  # 10MB
 
-  # 安全配置
   security:
     allowed-origins:
       - http://localhost:8080
       - http://localhost:3000
       - http://127.0.0.1:8080
       - http://127.0.0.1:3000
-    allowed-methods:
-      - GET
-      - POST
-      - PUT
-      - DELETE
-      - OPTIONS
-    allowed-headers:
-      - "*"
+    allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
+    allowed-headers: ["*"]
     allow-credentials: true
     max-age: 3600
 
-  # Excel导入配置
   excel:
     max-rows: 10000
     chunk-size: 1000
     temp-dir: /tmp/excel-import
 
-  # 缓存配置
   cache:
     default-ttl: 3600  # 1小时
     user-ttl: 1800     # 30分钟
     data-ttl: 7200     # 2小时
     max-size: 10000
 
-  # 分页配置
   page:
     default-size: 20
     max-size: 100
 
-  # 密码策略
   password:
     min-length: 6
     max-length: 20
@@ -281,3 +251,9 @@ app:
     require-lowercase: false
     require-digit: false
     require-special: false
+
+  performance:
+    monitoring:
+      enabled: false  # 开发环境可在dev中开启
+    test:
+      enabled: false

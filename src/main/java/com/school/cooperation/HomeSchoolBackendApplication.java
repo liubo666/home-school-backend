@@ -12,7 +12,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Home School Team
  * @version 1.0.0
  */
-@SpringBootApplication(scanBasePackages = "com.school.cooperation")
+@SpringBootApplication(
+    scanBasePackages = "com.school.cooperation"
+
+)
 @EnableCaching
 @EnableAsync
 @EnableTransactionManagement

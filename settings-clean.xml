@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+
+  <localRepository>D:\softV2\apache-maven-3.9.8\repo</localRepository>
+
+  <mirrors>
+    <!-- 阿里云中央仓库镜像 -->
+    <mirror>
+        <id>alimaven-central</id>
+        <mirrorOf>central</mirrorOf>
+        <name>Aliyun Central Maven Mirror</name>
+        <url>https://maven.aliyun.com/repository/central</url>
+    </mirror>
+
+    <!-- 阿里云公共仓库镜像 -->
+    <mirror>
+        <id>alimaven-public</id>
+        <mirrorOf>*</mirrorOf>
+        <name>Aliyun Public Maven Mirror</name>
+        <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+  </mirrors>
+
+  <profiles>
+      <profile>
+          <id>aliyun-repos</id>
+          <repositories>
+              <repository>
+                  <id>central</id>
+                  <url>https://maven.aliyun.com/repository/central</url>
+                  <releases>
+                      <enabled>true</enabled>
+                  </releases>
+                  <snapshots>
+                      <enabled>false</enabled>
+                  </snapshots>
+              </repository>
+              <repository>
+                  <id>public</id>
+                  <url>https://maven.aliyun.com/repository/public</url>
+                  <releases>
+                      <enabled>true</enabled>
+                  </releases>
+                  <snapshots>
+                      <enabled>false</enabled>
+                  </snapshots>
+              </repository>
+          </repositories>
+          <pluginRepositories>
+              <pluginRepository>
+                  <id>central</id>
+                  <url>https://maven.aliyun.com/repository/central</url>
+                  <releases>
+                      <enabled>true</enabled>
+                  </releases>
+                  <snapshots>
+                      <enabled>false</enabled>
+                  </snapshots>
+              </pluginRepository>
+              <pluginRepository>
+                  <id>public</id>
+                  <url>https://maven.aliyun.com/repository/public</url>
+                  <releases>
+                      <enabled>true</enabled>
+                  </releases>
+                  <snapshots>
+                      <enabled>false</enabled>
+                  </snapshots>
+              </pluginRepository>
+          </pluginRepositories>
+      </profile>
+  </profiles>
+
+  <activeProfiles>
+      <activeProfile>aliyun-repos</activeProfile>
+  </activeProfiles>
+
+</settings>

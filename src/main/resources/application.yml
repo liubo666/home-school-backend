@@ -1,0 +1,283 @@
+# 应用基础配置
+server:
+  port: 8089
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+spring:
+  profiles:
+    active: dev
+
+  application:
+    name: home-school-backend
+
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/home_school?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: HomeSchoolHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+    open-in-view: false
+
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 20
+          max-idle: 10
+          min-idle: 5
+          max-wait: 3000ms
+          time-between-eviction-runs: 30000ms
+
+  # 缓存配置
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 1小时
+      cache-null-values: false
+      use-key-prefix: true
+      key-prefix: "home-school:"
+
+  # Jackson配置
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      file-size-threshold: 0
+
+# MyBatis Plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: assign_id
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      update-strategy: not_null
+      select-strategy: not_empty
+    banner: false
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.school.cooperation.entity
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.school.cooperation: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.cache: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/home-school-backend.log
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 1GB
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  expiration: 86400000  # 24小时
+  refresh-expiration: 604800000  # 7天
+  issuer: home-school-backend
+
+# MinIO配置
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket-name: home-school
+  region: us-east-1
+
+# Knife4j API文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 家校协同教育系统API文档
+    description: 家校协同教育系统后端接口文档
+    version: 1.0.0
+    concat-contact: true
+    contact:
+      name: Home School Team
+      email: dev@homeschool.com
+      url: https://www.homeschool.com
+    license: Apache 2.0
+    license-url: https://www.apache.org/licenses/LICENSE-2.0
+    terms-of-service-url: https://www.homeschool.com/terms
+  setting:
+    language: zh-CN
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表
+    enable-version: false
+    enable-reload-cache-parameter: false
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+    enable-host: false
+    enable-host-text: localhost:8080
+    enable-home-custom: false
+    home-custom-location: classpath:markdown/home.md
+    enable-search: true
+    enable-footer: false
+    enable-footer-custom: true
+    footer-custom-content: Copyright © 2024 Home School Team
+    enable-dynamic-parameter: false
+    enable-debug: true
+    enable-open-api: true
+    enable-group: true
+  cors: true
+  production: false
+  basic:
+    enable: false
+    username: admin
+    password: 123456
+
+# Actuator监控配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,env,beans
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      percentiles:
+        http.server.requests: 0.5, 0.95, 0.99
+    tags:
+      application: home-school-backend
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
+
+# 自定义配置
+app:
+  # 文件存储配置
+  storage:
+    type: minio  # local/minio/oss
+    local:
+      base-path: /var/home-school/files
+    allowed-types: .jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx
+    max-size: 10485760  # 10MB
+
+  # 安全配置
+  security:
+    allowed-origins:
+      - http://localhost:8080
+      - http://localhost:3000
+      - http://127.0.0.1:8080
+      - http://127.0.0.1:3000
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+    allowed-headers:
+      - "*"
+    allow-credentials: true
+    max-age: 3600
+
+  # Excel导入配置
+  excel:
+    max-rows: 10000
+    chunk-size: 1000
+    temp-dir: /tmp/excel-import
+
+  # 缓存配置
+  cache:
+    default-ttl: 3600  # 1小时
+    user-ttl: 1800     # 30分钟
+    data-ttl: 7200     # 2小时
+    max-size: 10000
+
+  # 分页配置
+  page:
+    default-size: 20
+    max-size: 100
+
+  # 密码策略
+  password:
+    min-length: 6
+    max-length: 20
+    require-uppercase: false
+    require-lowercase: false
+    require-digit: false
+    require-special: false

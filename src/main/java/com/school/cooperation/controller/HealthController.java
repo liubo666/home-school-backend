@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,12 +42,19 @@ public class HealthController {
             // 检查数据库连接
             try (Connection connection = dataSource.getConnection()) {
                 health.put("database", "UP");
-                health.put("database_url", connection.getMetaData().getURL());
+                // 不暴露完整的数据库URL，只显示必要信息
+                String dbUrl = connection.getMetaData().getURL();
+                String maskedUrl = dbUrl.replaceAll("://.*@", "://***@***");
+                health.put("database_info", maskedUrl);
             }
+        } catch (SQLException e) {
+            log.error("数据库连接检查失败", e);
+            health.put("database", "DOWN");
+            health.put("database_error", "数据库连接异常"); // 不暴露具体错误信息
         } catch (Exception e) {
             log.error("数据库连接检查失败", e);
             health.put("database", "DOWN");
-            health.put("database_error", e.getMessage());
+            health.put("database_error", "系统异常"); // 通用错误信息
         }
 
         // 应用信息

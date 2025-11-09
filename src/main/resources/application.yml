@@ -18,9 +18,9 @@ spring:
   # 数据源公共配置（环境特定参数由dev配置覆盖）
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # 主配置保留驱动，避免重复
-    url: jdbc:mysql://localhost:3306/home_school?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:home_school}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL:false}&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}  # 支持环境变量注入，优先级更高
-    password: ${DB_PASSWORD:root}
+    password: ${DB_PASSWORD:}
 
   # JPA公共配置（开发环境的show-sql等在dev中单独设置）
   jpa:

@@ -1,0 +1,25 @@
+# Bootstrap配置文件 - 应用启动时最先加载的配置
+# 用于配置应用名称、激活的环境和配置中心设置
+
+spring:
+  application:
+    name: home-school-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  cloud:
+    config:
+      # 未来可接入配置中心 (如Spring Cloud Config, Nacos等)
+      enabled: false
+      # 配置中心地址 (后续扩展)
+      # uri: http://config-server:8888
+      # label: master
+      # name: ${spring.application.name}
+      # profile: ${spring.profiles.active}
+
+# 应用基础配置
+app:
+  bootstrap:
+    # 启动标记，用于标识配置加载阶段
+    enabled: true
+    # 配置加载时间戳
+    load-time: ${APP_BOOTSTRAP_TIME:}

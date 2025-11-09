@@ -143,8 +143,8 @@
             <version>${easyexcel.version}</version>
         </dependency>
 
-        <!-- MapStruct -->
-        <!-- <dependency>
+        <!-- MapStruct (当前未使用，如需启用请取消注释)
+        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.version}</version>
@@ -294,9 +294,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>9.22.3</version>
                 <configuration>
-                    <url>jdbc:mysql://localhost:3306/home_school</url>
-                    <user>root</user>
-                    <password>123456</password>
+                    <url>${FLYWAY_URL:jdbc:mysql://localhost:3306/home_school}</url>
+                    <user>${FLYWAY_USER:root}</user>
+                    <password>${FLYWAY_PASSWORD:}</password>
                     <locations>
                         <location>classpath:db/migration</location>
                     </locations>

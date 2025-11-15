@@ -23,7 +23,6 @@ import javax.sql.DataSource;
 @Configuration
 @EnableJpaRepositories(basePackages = "com.school.cooperation.repository")
 @EntityScan(basePackages = "com.school.cooperation.entity")
-@EnableJpaAuditing
 @EnableTransactionManagement
 public class DatabaseConfig {
 

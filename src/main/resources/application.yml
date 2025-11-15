@@ -2,7 +2,6 @@
 server:
   port: 8089
   servlet:
-    context-path: /api
     encoding:
       charset: UTF-8
       enabled: true
@@ -20,7 +19,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver  # 主配置保留驱动，避免重复
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:home_school}?useUnicode=true&characterEncoding=utf8&useSSL=${USE_SSL:false}&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}  # 支持环境变量注入，优先级更高
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:root}
 
   # JPA公共配置（开发环境的show-sql等在dev中单独设置）
   jpa:
@@ -36,6 +35,9 @@ spring:
         order_inserts: true
         order_updates: true
         generate_statistics: false  # 开发环境可开启，主配置默认关闭
+        transaction:
+          jta:
+            platform: org.hibernate.service.jta.platform.internal.NoJtaPlatform
     open-in-view: false  # 关闭懒加载隐患
 
   # Redis公共配置（连接池参数通用，环境特定的host/port在dev中覆盖）
@@ -80,25 +82,6 @@ spring:
       enabled: true
       file-size-threshold: 0
 
-# MyBatis Plus全局配置（通用配置，无环境差异）
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-    cache-enabled: false
-    call-setters-on-nulls: true
-    jdbc-type-for-null: 'null'
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
-  global-config:
-    db-config:
-      id-type: assign_id
-      logic-delete-field: deleted
-      logic-delete-value: 1
-      logic-not-delete-value: 0
-      update-strategy: not_null
-      select-strategy: not_empty
-    banner: false
-  mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.school.cooperation.entity
 
 # 日志公共配置（输出格式、文件路径通用，级别由dev覆盖）
 logging:
@@ -224,6 +207,10 @@ app:
       - http://localhost:3000
       - http://127.0.0.1:8080
       - http://127.0.0.1:3000
+      - http://192.168.0.112:8080
+      - http://192.168.0.112:3000
+      - http://192.168.*:8080
+      - http://192.168.*:3000
     allowed-methods: [GET, POST, PUT, DELETE, OPTIONS]
     allowed-headers: ["*"]
     allow-credentials: true

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn dependency:analyze:*)",
+      "Bash(mvn dependency:tree:*)",
+      "Bash(mvn clean compile:*)",
+      "Bash(curl:*)",
+      "Bash(echo:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

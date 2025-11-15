@@ -20,14 +20,12 @@
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <spring-boot.version>3.2.0</spring-boot.version>
-        <mybatis-plus.version>3.5.4</mybatis-plus.version>
         <mysql.version>8.0.33</mysql.version>
         <redis.version>4.4.6</redis.version>
         <minio.version>8.5.4</minio.version>
         <jwt.version>0.12.3</jwt.version>
         <poi.version>5.2.4</poi.version>
         <easyexcel.version>3.3.2</easyexcel.version>
-        <mapstruct.version>1.5.3</mapstruct.version>
         <hutool.version>5.8.22</hutool.version>
         <knife4j.version>4.3.0</knife4j.version>
     </properties>
@@ -83,17 +81,12 @@
 
         <!-- Database -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             <version>${mysql.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-
+        
         <!-- Redis -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -143,13 +136,7 @@
             <version>${easyexcel.version}</version>
         </dependency>
 
-        <!-- MapStruct (当前未使用，如需启用请取消注释)
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency> -->
-
+  
         <!-- Hutool Utilities -->
         <dependency>
             <groupId>cn.hutool</groupId>
@@ -164,31 +151,7 @@
             <version>${knife4j.version}</version>
         </dependency>
 
-        <!-- Test Dependencies -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
-            <scope>test</scope>
-        </dependency>
-
+  
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -245,49 +208,11 @@
                             <artifactId>lombok</artifactId>
                             <version>1.18.30</version>
                         </path>
-                        <!-- <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path> -->
-                    </annotationProcessorPaths>
+                      </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin for Tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                        <include>**/*Tests.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-
-            <!-- Maven Failsafe Plugin for Integration Tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.2.2</version>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                        <include>**/*IntegrationTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
+  
             <!-- Flyway Migration Plugin -->
             <plugin>
                 <groupId>org.flywaydb</groupId>
@@ -303,27 +228,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Jacoco Code Coverage Plugin -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.11</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
+  
             <!-- SpotBugs Plugin -->
             <plugin>
                 <groupId>com.github.spotbugs</groupId>

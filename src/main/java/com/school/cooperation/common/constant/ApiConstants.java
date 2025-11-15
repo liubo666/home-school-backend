@@ -25,6 +25,15 @@ public interface ApiConstants {
         String PARENT_LOGIN = PREFIX + "/parent-login";
     }
 
+//    interface Auth {
+//        String LOGIN = "/login";
+//        String LOGOUT = "/logout";
+//        String REGISTER =  "/register";
+//        String REFRESH_TOKEN ="/refresh";
+//        String CHANGE_PASSWORD =  "/change-password";
+//        String PARENT_LOGIN = "/parent-login";
+//    }
+
     /**
      * 用户管理路径
      */

@@ -25,13 +25,13 @@ public class Result<T> {
     private T data;
 
     @Schema(description = "响应时间")
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     @Schema(description = "请求ID")
     private String requestId;
 
     public Result() {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().toString();
     }
 
     public Result(Integer code, String message) {

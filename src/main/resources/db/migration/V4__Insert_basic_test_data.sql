@@ -7,24 +7,24 @@ USE home_school;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- 1. 插入测试用户数据
-INSERT INTO sys_user (username, password, real_name, phone, email, avatar, role, status, last_login_time, created_time, updated_time) VALUES
+INSERT INTO sys_user (username, password, real_name, phone, email, school_id, avatar, role, status, last_login_time, created_time, updated_time) VALUES
 -- 管理员用户
-('admin', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '系统管理员', '13800000001', 'admin@homeschool.com', 'https://example.com/avatar/admin.jpg', 'ADMIN', 'ACTIVE', NOW(), NOW(), NOW()),
+('admin', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '系统管理员', '13800000001', 'admin@homeschool.com', 1, 'https://example.com/avatar/admin.jpg', 'ADMIN', 'ACTIVE', NOW(), NOW(), NOW()),
 
 -- 学校管理员
-('school_admin', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '学校管理员', '13800000002', 'school_admin@homeschool.com', 'https://example.com/avatar/school_admin.jpg', 'SCHOOL_ADMIN', 'ACTIVE', NOW(), NOW(), NOW()),
+('school_admin', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '学校管理员', '13800000002', 'school_admin@homeschool.com', 1, 'https://example.com/avatar/school_admin.jpg', 'SCHOOL_ADMIN', 'ACTIVE', NOW(), NOW(), NOW()),
 
 -- 教师用户
-('teacher001', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张老师', '13800000101', 'zhang@homeschool.com', 'https://example.com/avatar/teacher1.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
-('teacher002', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李老师', '13800000102', 'li@homeschool.com', 'https://example.com/avatar/teacher2.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
-('teacher003', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '王老师', '13800000103', 'wang@homeschool.com', 'https://example.com/avatar/teacher3.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
+('teacher001', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张老师', '13800000101', 'zhang@homeschool.com', 1, 'https://example.com/avatar/teacher1.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
+('teacher002', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李老师', '13800000102', 'li@homeschool.com', 1, 'https://example.com/avatar/teacher2.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
+('teacher003', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '王老师', '13800000103', 'wang@homeschool.com', 1, 'https://example.com/avatar/teacher3.jpg', 'TEACHER', 'ACTIVE', NOW(), NOW(), NOW()),
 
 -- 家长用户
-('parent001', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张爸爸', '13800000201', 'zhangbaba@homeschool.com', 'https://example.com/avatar/parent1.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
-('parent002', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张妈妈', '13800000202', 'zhangmama@homeschool.com', 'https://example.com/avatar/parent2.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
-('parent003', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李爸爸', '13800000203', 'libaba@homeschool.com', 'https://example.com/avatar/parent3.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
-('parent004', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李妈妈', '13800000204', 'limama@homeschool.com', 'https://example.com/avatar/parent4.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
-('parent005', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '王爸爸', '13800000205', 'wangbaba@homeschool.com', 'https://example.com/avatar/parent5.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW());
+('parent001', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张爸爸', '13800000201', 'zhangbaba@homeschool.com', 1, 'https://example.com/avatar/parent1.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
+('parent002', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '张妈妈', '13800000202', 'zhangmama@homeschool.com', 1, 'https://example.com/avatar/parent2.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
+('parent003', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李爸爸', '13800000203', 'libaba@homeschool.com', 1, 'https://example.com/avatar/parent3.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
+('parent004', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '李妈妈', '13800000204', 'limama@homeschool.com', 1, 'https://example.com/avatar/parent4.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW()),
+('parent005', '$2a$10$7JB720yubVSOfvVWbfXCOOxjTOQcQjmrJF1ZM4nAVccp/.rkCqE5S', '王爸爸', '13800000205', 'wangbaba@homeschool.com', 1, 'https://example.com/avatar/parent5.jpg', 'PARENT', 'ACTIVE', NOW(), NOW(), NOW());
 
 -- 2. 插入班级数据
 INSERT INTO edu_class (name, grade, teacher_id, student_count, description, status, created_time, updated_time) VALUES

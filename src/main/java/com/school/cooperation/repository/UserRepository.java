@@ -3,6 +3,8 @@ package com.school.cooperation.repository;
 import com.school.cooperation.entity.User;
 import com.school.cooperation.entity.enums.UserRole;
 import com.school.cooperation.entity.enums.UserStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -160,4 +162,17 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
      */
     @Query("SELECT u FROM User u WHERE (u.lastLoginTime IS NULL OR u.lastLoginTime < :lastLoginThreshold) AND u.status = 'ACTIVE' AND u.deleted = false")
     List<User> findInactiveUsers(@Param("lastLoginThreshold") LocalDateTime lastLoginThreshold);
+
+    /**
+     * 分页查询用户
+     */
+    @Query("SELECT u FROM User u WHERE " +
+           "(:keyword IS NULL OR u.username LIKE %:keyword% OR u.realName LIKE %:keyword% OR u.phone LIKE %:keyword%) AND " +
+           "(:role IS NULL OR u.role = :role) AND " +
+           "(:status IS NULL OR u.status = :status) AND " +
+           "u.deleted = false ORDER BY u.createdTime DESC")
+    Page<User> findUsersWithPagination(@Param("keyword") String keyword,
+                                     @Param("role") UserRole role,
+                                     @Param("status") UserStatus status,
+                                     Pageable pageable);
 }

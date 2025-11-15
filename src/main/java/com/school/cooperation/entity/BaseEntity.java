@@ -76,4 +76,13 @@ public abstract class BaseEntity {
     protected void onUpdate() {
         updatedTime = LocalDateTime.now();
     }
+
+    /**
+     * 是否已删除
+     *
+     * @return true if deleted, false otherwise
+     */
+    public Boolean isDeleted() {
+        return this.deleted != null && this.deleted;
+    }
 }

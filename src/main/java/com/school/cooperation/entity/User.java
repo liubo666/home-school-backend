@@ -67,6 +67,20 @@ public class User extends BaseEntity {
     private String email;
 
     /**
+     * 学校ID
+     */
+    @Column(name = "school_id")
+    private String schoolId;
+
+
+
+    /**
+     * 学校ID
+     */
+    @Column(name = "school_name")
+    private String schoolName;
+
+    /**
      * 头像URL
      */
     @Size(max = 255, message = "头像URL长度不能超过255个字符")

@@ -20,7 +20,9 @@ public enum UserStatus {
     /**
      * 暂停使用
      */
-    SUSPENDED("SUSPENDED", "暂停使用");
+    SUSPENDED("SUSPENDED", "暂停使用"),
+
+    LOCKED("LOCKED", "锁定"),;
 
     private final String code;
     private final String description;

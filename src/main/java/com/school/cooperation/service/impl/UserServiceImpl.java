@@ -1,11 +1,14 @@
 package com.school.cooperation.service.impl;
 
 import com.school.cooperation.common.exception.BusinessException;
+import com.school.cooperation.common.utils.PageResult;
 import com.school.cooperation.entity.User;
 import com.school.cooperation.entity.enums.UserRole;
 import com.school.cooperation.entity.enums.UserStatus;
 import com.school.cooperation.repository.UserRepository;
 import com.school.cooperation.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -189,10 +192,88 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Long userId) {
         // 检查用户是否存在
-        if (!userRepository.existsById(userId)) {
-            throw new BusinessException(404, "用户不存在");
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(404, "用户不存在"));
+
+        // 软删除：设置删除标记
+        user.setDeleted(true);
+        user.setUpdatedTime(LocalDateTime.now());
+        userRepository.save(user);
+
+        log.info("用户删除成功: userId={}, username={}", userId, user.getUsername());
+    }
+
+    @Override
+    public List<User> findByConditions(String username, String realName, String phone, UserRole role, UserStatus status) {
+        return userRepository.findByConditions(username, realName, phone, role, status);
+    }
+
+    @Override
+    public List<User> getActiveTeachers() {
+        return userRepository.findActiveTeachers();
+    }
+
+    @Override
+    public List<User> getActiveParents() {
+        return userRepository.findActiveParents();
+    }
+
+    @Override
+    public List<User> findByRealNameContaining(String realName) {
+        return userRepository.findByRealNameContaining(realName);
+    }
+
+    @Override
+    @Transactional
+    public void updateLastLoginTime(Long userId, LocalDateTime loginTime) {
+        userRepository.updateLastLoginTime(userId, loginTime);
+    }
+
+    @Override
+    @Transactional
+    public void batchUpdateUserStatus(List<Long> userIds, UserStatus status) {
+        List<User> users = userRepository.findAllById(userIds);
+
+        for (User user : users) {
+            user.setStatus(status);
+            user.setUpdatedTime(LocalDateTime.now());
         }
 
-        userRepository.deleteById(userId);
+        userRepository.saveAll(users);
+        log.info("批量更新用户状态成功: userIds={}, status={}", userIds, status);
+    }
+
+    @Override
+    public List<Object[]> countUsersByRole() {
+        return userRepository.countUsersByRole();
+    }
+
+    @Override
+    public List<Object[]> countUsersByStatus() {
+        return userRepository.countUsersByStatus();
+    }
+
+    @Override
+    public List<User> findInactiveUsers(LocalDateTime threshold) {
+        return userRepository.findInactiveUsers(threshold);
+    }
+
+    @Override
+    public Page<User> findUsersWithPagination(String keyword, UserRole role, UserStatus status, Pageable pageable) {
+        return userRepository.findUsersWithPagination(keyword, role, status, pageable);
+    }
+
+    @Override
+    @Transactional
+    public void batchDeleteUsers(List<Long> userIds) {
+        List<User> users = userRepository.findAllById(userIds);
+
+        // 记录删除日志
+        for (User user : users) {
+            log.info("删除用户: userId={}, username={}, role={}", user.getId(), user.getUsername(), user.getRole());
+        }
+
+        userRepository.deleteAllById(userIds);
+        log.info("批量删除用户成功: userIds={}", userIds);
     }
 }

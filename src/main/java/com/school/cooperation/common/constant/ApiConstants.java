@@ -22,6 +22,7 @@ public interface ApiConstants {
         String REGISTER = PREFIX + "/register";
         String REFRESH_TOKEN = PREFIX + "/refresh";
         String CHANGE_PASSWORD = PREFIX + "/change-password";
+        String RESET_PASSWORD = PREFIX + "/reset-password";
         String PARENT_LOGIN = PREFIX + "/parent-login";
     }
 

@@ -5,7 +5,9 @@ import com.school.cooperation.common.utils.Result;
 import com.school.cooperation.dto.ChangePasswordRequest;
 import com.school.cooperation.dto.LoginRequest;
 import com.school.cooperation.dto.LoginResponse;
+import com.school.cooperation.dto.PasswordResetRequest;
 import com.school.cooperation.dto.RefreshTokenRequest;
+import com.school.cooperation.dto.UserCreateRequest;
 import com.school.cooperation.entity.User;
 import com.school.cooperation.security.JwtUtils;
 import com.school.cooperation.service.AuthService;
@@ -167,14 +169,23 @@ public class AuthController {
     @PostMapping(ApiConstants.Auth.REGISTER)
     @Operation(summary = "用户注册", description = "管理员创建新用户账号")
     public Result<User> register(
-            @Valid @RequestBody User user,
-            HttpServletRequest request) {
+            @Valid @RequestBody UserCreateRequest request,
+            HttpServletRequest httpRequest) {
         try {
-            String token = jwtUtils.getTokenFromRequest(request);
+            String token = jwtUtils.getTokenFromRequest(httpRequest);
             String operatorUsername = jwtUtils.getUsernameFromToken(token);
 
             log.info("管理员创建用户: operator={}, username={}, role={}",
-                    operatorUsername, user.getUsername(), user.getRole());
+                    operatorUsername, request.getUsername(), request.getRole());
+
+            // 转换DTO为实体
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setPassword(request.getPassword());
+            user.setRealName(request.getRealName());
+            user.setRole(request.getRole());
+            user.setPhone(request.getPhone());
+            user.setEmail(request.getEmail());
 
             // 调用认证服务创建用户
             User createdUser = authService.register(user, operatorUsername);
@@ -205,6 +216,32 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Token验证失败: error={}", e.getMessage(), e);
             return Result.success("Token验证完成", false);
+        }
+    }
+
+    /**
+     * 重置密码
+     */
+    @PostMapping(ApiConstants.Auth.RESET_PASSWORD)
+    @Operation(summary = "重置密码", description = "通过用户名/手机号/邮箱重置密码")
+    public Result<String> resetPassword(
+            @Valid @RequestBody PasswordResetRequest passwordResetRequest,
+            HttpServletRequest request) {
+        try {
+            log.info("密码重置请求: username={}, ip={}",
+                    passwordResetRequest.getUsername(), getClientIpAddress(request));
+
+            // 调用认证服务重置密码
+            authService.resetPassword(passwordResetRequest);
+
+            log.info("密码重置成功: username={}", passwordResetRequest.getUsername());
+
+            return Result.success("密码重置成功");
+
+        } catch (Exception e) {
+            log.error("密码重置失败: username={}, error={}",
+                    passwordResetRequest.getUsername(), e.getMessage(), e);
+            return Result.error("密码重置失败: " + e.getMessage());
         }
     }
 

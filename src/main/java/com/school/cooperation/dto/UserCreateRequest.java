@@ -1,5 +1,6 @@
 package com.school.cooperation.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.school.cooperation.entity.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -55,4 +56,15 @@ public class UserCreateRequest {
      */
     @Email(message = "邮箱格式不正确")
     private String email;
+
+    /**
+     * 学校ID
+     */
+    private String schoolId;
+
+
+    /**
+     * 学校ID
+     */
+    private String schoolName;
 }

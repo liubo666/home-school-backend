@@ -3,6 +3,7 @@ package com.school.cooperation.service;
 import com.school.cooperation.dto.ChangePasswordRequest;
 import com.school.cooperation.dto.LoginRequest;
 import com.school.cooperation.dto.LoginResponse;
+import com.school.cooperation.dto.PasswordResetRequest;
 import com.school.cooperation.entity.User;
 
 /**
@@ -67,4 +68,11 @@ public interface AuthService {
      * @return 用户信息
      */
     User getCurrentUser(String username);
+
+    /**
+     * 重置密码
+     *
+     * @param passwordResetRequest 密码重置请求
+     */
+    void resetPassword(PasswordResetRequest passwordResetRequest);
 }

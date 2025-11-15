@@ -34,7 +34,7 @@ spring:
           batch_size: 25
         order_inserts: true
         order_updates: true
-        generate_statistics: false  # 开发环境可开启，主配置默认关闭
+        generate_statistics: false  # 确保统计功能关闭
         transaction:
           jta:
             platform: org.hibernate.service.jta.platform.internal.NoJtaPlatform
@@ -85,6 +85,11 @@ spring:
 
 # 日志公共配置（输出格式、文件路径通用，级别由dev覆盖）
 logging:
+  level:
+    # 全局禁用Hibernate统计相关日志，减少日志噪音
+    org.hibernate.stat: WARN
+    org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: WARN
+    org.hibernate.event.internal.AbstractFlushingEventListener: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

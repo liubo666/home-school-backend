@@ -1,6 +1,7 @@
 package com.school.cooperation.controller;
 
 import com.school.cooperation.common.constant.RoleConstant;
+import com.school.cooperation.common.utils.PageResult;
 import com.school.cooperation.common.utils.Result;
 import com.school.cooperation.dto.UserCreateRequest;
 import com.school.cooperation.dto.UserUpdateRequest;
@@ -8,6 +9,9 @@ import com.school.cooperation.entity.User;
 import com.school.cooperation.entity.enums.UserRole;
 import com.school.cooperation.entity.enums.UserStatus;
 import com.school.cooperation.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +24,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -37,6 +43,39 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    /**
+     * 分页获取用户列表
+     */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "分页获取用户列表", description = "分页获取用户列表，支持关键词搜索和筛选")
+    public Result<Page<User>> getUsers(
+            @Parameter(description = "页码", example = "1") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页大小", example = "20") @RequestParam(defaultValue = "20") int pageSize,
+            @Parameter(description = "搜索关键词") @RequestParam(required = false) String keyword,
+            @Parameter(description = "用户角色") @RequestParam(required = false) UserRole role,
+            @Parameter(description = "用户状态") @RequestParam(required = false) UserStatus status) {
+
+        // 创建Pageable对象
+        Pageable pageable = PageRequest.of(page - 1, pageSize); // Spring Data的页码从0开始
+        Page<User> result = userService.findUsersWithPagination(keyword, role, status, pageable);
+        return Result.success(result);
+    }
+
+    /**
+     * 批量删除用户
+     */
+    @DeleteMapping("/batch")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "批量删除用户", description = "批量删除多个用户")
+    public Result<Void> batchDeleteUsers(
+            @Parameter(description = "用户ID列表", required = true)
+            @RequestParam List<Long> userIds) {
+
+        userService.batchDeleteUsers(userIds);
+        return Result.success();
+    }
 
     /**
      * 获取当前用户信息
@@ -227,5 +266,89 @@ public class UserController {
 
         userService.resetPassword(id, newPassword);
         return Result.success();
+    }
+
+    /**
+     * 搜索用户
+     */
+    @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "搜索用户", description = "根据条件搜索用户")
+    public Result<List<User>> searchUsers(
+            @Parameter(description = "用户名") @RequestParam(required = false) String username,
+            @Parameter(description = "真实姓名") @RequestParam(required = false) String realName,
+            @Parameter(description = "手机号") @RequestParam(required = false) String phone,
+            @Parameter(description = "用户角色") @RequestParam(required = false) UserRole role,
+            @Parameter(description = "用户状态") @RequestParam(required = false) UserStatus status) {
+
+        List<User> users = userService.findByConditions(username, realName, phone, role, status);
+        return Result.success(users);
+    }
+
+    /**
+     * 根据真实姓名搜索用户
+     */
+    @GetMapping("/search/by-name")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "根据真实姓名搜索用户", description = "根据真实姓名模糊搜索用户")
+    public Result<List<User>> searchUsersByName(
+            @Parameter(description = "真实姓名", required = true)
+            @RequestParam String realName) {
+
+        List<User> users = userService.findByRealNameContaining(realName);
+        return Result.success(users);
+    }
+
+    /**
+     * 批量更新用户状态
+     */
+    @PutMapping("/batch-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "批量更新用户状态", description = "批量更新多个用户的状态")
+    public Result<Void> batchUpdateUserStatus(
+            @Parameter(description = "用户ID列表", required = true)
+            @RequestParam List<Long> userIds,
+            @Parameter(description = "用户状态", required = true)
+            @RequestParam UserStatus status) {
+
+        userService.batchUpdateUserStatus(userIds, status);
+        return Result.success();
+    }
+
+    /**
+     * 获取用户统计信息
+     */
+    @GetMapping("/statistics")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "获取用户统计信息", description = "获取按角色分组的用户统计")
+    public Result<List<Object[]>> getUserStatisticsByRole() {
+        List<Object[]> statistics = userService.countUsersByRole();
+        return Result.success(statistics);
+    }
+
+    /**
+     * 获取用户状态统计
+     */
+    @GetMapping("/status-statistics")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "获取用户状态统计", description = "获取按状态分组的用户统计")
+    public Result<List<Object[]>> getUserStatisticsByStatus() {
+        List<Object[]> statistics = userService.countUsersByStatus();
+        return Result.success(statistics);
+    }
+
+    /**
+     * 获取长期未登录用户
+     */
+    @GetMapping("/inactive-users")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "获取长期未登录用户", description = "获取超过指定时间未登录的用户")
+    public Result<List<User>> getInactiveUsers(
+            @Parameter(description = "天数阈值", required = true)
+            @RequestParam Integer days) {
+
+        LocalDateTime threshold = LocalDateTime.now().minusDays(days);
+        List<User> users = userService.findInactiveUsers(threshold);
+        return Result.success(users);
     }
 }

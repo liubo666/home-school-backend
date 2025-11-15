@@ -5,6 +5,7 @@ import com.school.cooperation.common.exception.BusinessException;
 import com.school.cooperation.dto.ChangePasswordRequest;
 import com.school.cooperation.dto.LoginRequest;
 import com.school.cooperation.dto.LoginResponse;
+import com.school.cooperation.dto.PasswordResetRequest;
 import com.school.cooperation.entity.User;
 import com.school.cooperation.entity.enums.UserRole;
 import com.school.cooperation.entity.enums.UserStatus;
@@ -43,17 +44,27 @@ public class AuthServiceImpl implements AuthService {
 
         // 验证密码
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            log.warn("用户登录密码错误: username={}, ip={}",
+                    loginRequest.getUsername(), "TODO: 获取IP地址");
             throw new BusinessException(ErrorCode.PASSWORD_ERROR, "用户名或密码错误");
         }
 
         // 检查用户状态
         if (user.getStatus() != UserStatus.ACTIVE) {
-            throw new BusinessException(ErrorCode.FORBIDDEN, "账户已被禁用，请联系管理员");
+            String statusMessage = switch (user.getStatus()) {
+                case INACTIVE -> "账户未激活，请联系管理员";
+                case SUSPENDED -> "账户已被暂停使用，请联系管理员";
+                case LOCKED -> "账户已被锁定，请联系管理员";
+                default -> "账户状态异常，请联系管理员";
+            };
+            throw new BusinessException(ErrorCode.FORBIDDEN, statusMessage);
         }
 
         // 更新最后登录时间
         user.setLastLoginTime(LocalDateTime.now());
         userRepository.save(user);
+
+        log.info("用户登录成功: username={}, role={}", user.getUsername(), user.getRole());
 
         // 生成Token
         String token = jwtUtils.generateToken(user.getUsername(), user.getRole().name());
@@ -212,6 +223,55 @@ public class AuthServiceImpl implements AuthService {
     public User getCurrentUser(String username) {
         return userRepository.findByUsernameAndDeletedFalse(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND, "用户不存在"));
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(PasswordResetRequest passwordResetRequest) {
+        // 验证新密码和确认密码是否一致
+        if (!passwordResetRequest.getNewPassword().equals(passwordResetRequest.getConfirmPassword())) {
+            throw new BusinessException(ErrorCode.PARAM_ERROR, "新密码和确认密码不一致");
+        }
+
+        // 查找用户（支持用户名、手机号、邮箱登录）
+        User user = findUserByIdentifier(passwordResetRequest.getUsername());
+
+        // TODO: 验证验证码（如果有）
+        if (passwordResetRequest.getVerificationCode() != null) {
+            // 这里可以添加验证码验证逻辑
+            log.info("密码重置验证码: {}", passwordResetRequest.getVerificationCode());
+        }
+
+        // 更新密码
+        user.setPassword(passwordEncoder.encode(passwordResetRequest.getNewPassword()));
+        user.setUpdatedTime(LocalDateTime.now());
+        userRepository.save(user);
+
+        log.info("用户密码重置成功: username={}", user.getUsername());
+    }
+
+    /**
+     * 根据标识符查找用户（支持用户名、手机号、邮箱）
+     */
+    private User findUserByIdentifier(String identifier) {
+        // 首先尝试用户名查找
+        User user = userRepository.findByUsernameAndDeletedFalse(identifier).orElse(null);
+
+        if (user == null) {
+            // 尝试手机号查找
+            user = userRepository.findByPhone(identifier).orElse(null);
+        }
+
+        if (user == null) {
+            // 尝试邮箱查找
+            user = userRepository.findByEmail(identifier).orElse(null);
+        }
+
+        if (user == null || user.isDeleted()) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, "用户不存在");
+        }
+
+        return user;
     }
 
     /**

@@ -1,9 +1,13 @@
 package com.school.cooperation.service;
 
+import com.school.cooperation.common.utils.PageResult;
 import com.school.cooperation.entity.User;
 import com.school.cooperation.entity.enums.UserRole;
 import com.school.cooperation.entity.enums.UserStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -148,4 +152,94 @@ public interface UserService {
      * @param userId 用户ID
      */
     void deleteUser(Long userId);
+
+    /**
+     * 根据条件查询用户列表
+     *
+     * @param username 用户名（模糊查询）
+     * @param realName 真实姓名（模糊查询）
+     * @param phone 手机号（模糊查询）
+     * @param role 角色
+     * @param status 状态
+     * @return 用户列表
+     */
+    List<User> findByConditions(String username, String realName, String phone, UserRole role, UserStatus status);
+
+    /**
+     * 获取教师用户列表
+     *
+     * @return 教师用户列表
+     */
+    List<User> getActiveTeachers();
+
+    /**
+     * 获取家长用户列表
+     *
+     * @return 家长用户列表
+     */
+    List<User> getActiveParents();
+
+    /**
+     * 根据真实姓名模糊查询用户
+     *
+     * @param realName 真实姓名
+     * @return 用户列表
+     */
+    List<User> findByRealNameContaining(String realName);
+
+    /**
+     * 更新用户最后登录时间
+     *
+     * @param userId 用户ID
+     * @param loginTime 登录时间
+     */
+    void updateLastLoginTime(Long userId, LocalDateTime loginTime);
+
+    /**
+     * 批量更新用户状态
+     *
+     * @param userIds 用户ID列表
+     * @param status 新状态
+     */
+    void batchUpdateUserStatus(List<Long> userIds, UserStatus status);
+
+    /**
+     * 获取用户统计信息
+     *
+     * @return 用户统计信息（按角色分组）
+     */
+    List<Object[]> countUsersByRole();
+
+    /**
+     * 获取用户状态统计
+     *
+     * @return 用户状态统计
+     */
+    List<Object[]> countUsersByStatus();
+
+    /**
+     * 查询长期未登录的用户
+     *
+     * @param threshold 时间阈值
+     * @return 长期未登录用户列表
+     */
+    List<User> findInactiveUsers(LocalDateTime threshold);
+
+    /**
+     * 分页查询用户
+     *
+     * @param keyword  搜索关键词
+     * @param role     用户角色
+     * @param status   用户状态
+     * @param pageable 分页参数
+     * @return 分页结果
+     */
+    Page<User> findUsersWithPagination(String keyword, UserRole role, UserStatus status, Pageable pageable);
+
+    /**
+     * 批量删除用户
+     *
+     * @param userIds 用户ID列表
+     */
+    void batchDeleteUsers(List<Long> userIds);
 }

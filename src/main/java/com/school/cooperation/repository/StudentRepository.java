@@ -53,6 +53,11 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
     List<Student> findByClassIdAndDeletedFalse(Long classId);
 
     /**
+     * 根据班级ID查询学生列表（不检查删除状态）
+     */
+    List<Student> findByClassId(Long classId);
+
+    /**
      * 根据状态查询学生列表
      */
     List<Student> findByStatusAndDeletedFalse(StudentStatus status);

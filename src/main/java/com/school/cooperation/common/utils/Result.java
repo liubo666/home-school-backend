@@ -138,6 +138,14 @@ public class Result<T> {
     }
 
     /**
+     * 设置数据
+     */
+    public Result<T> data(T data) {
+        this.data = data;
+        return this;
+    }
+
+    /**
      * 判断是否成功
      */
     public boolean isSuccess() {

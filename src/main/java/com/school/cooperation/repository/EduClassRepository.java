@@ -33,6 +33,26 @@ public interface EduClassRepository extends JpaRepository<EduClass, Long>, JpaSp
     /**
      * 检查班级名称是否存在
      */
+    boolean existsByName(String name);
+
+    /**
+     * 根据状态查询班级列表
+     */
+    List<EduClass> findByStatus(ClassStatus status);
+
+    /**
+     * 根据班主任查询班级列表
+     */
+    List<EduClass> findByTeacherId(Long teacherId);
+
+    /**
+     * 根据年级查询班级列表
+     */
+    List<EduClass> findByGrade(String grade);
+
+    /**
+     * 检查班级名称是否存在
+     */
     boolean existsByNameAndDeletedFalse(String name);
 
     /**

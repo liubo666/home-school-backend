@@ -78,9 +78,19 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     List<User> findByRoleAndDeletedFalse(UserRole role);
 
     /**
+     * 根据角色查询用户列表（不检查删除状态）
+     */
+    List<User> findByRole(UserRole role);
+
+    /**
      * 根据状态查询用户列表
      */
     List<User> findByStatusAndDeletedFalse(UserStatus status);
+
+    /**
+     * 根据状态查询用户列表（不检查删除状态）
+     */
+    List<User> findByStatus(UserStatus status);
 
     /**
      * 根据角色和状态查询用户列表
